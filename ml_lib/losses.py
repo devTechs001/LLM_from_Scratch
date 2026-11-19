@@ -17,3 +17,25 @@ def binary_cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Computes Binary Cross-Entropy (Log Loss) for binary classification."""
     y_pred = np.clip(y_pred, 1e-15, 1.0 - 1e-15)
     return float(-np.mean(y_true * np.log(y_pred) + (1.0 - y_true) * np.log(1.0 - y_pred)))
+
+def softmax(logits: np.ndarray) -> np.ndarray:
+    """Converts raw logits into a probability distribution summing to 1 per row."""
+    # Subtract max per row for numerical stability (prevents exp overflow)
+    shifted = logits - np.max(logits, axis=1, keepdims=True)
+    exps = np.exp(shifted)
+    return exps / np.sum(exps, axis=1, keepdims=True)
+
+def cross_entropy_loss(y_true_indices: np.ndarray, probs: np.ndarray) -> float:
+    """Computes Categorical Cross-Entropy given integer class labels and probabilities."""
+    n_samples = len(y_true_indices)
+    clipped_probs = np.clip(probs, 1e-15, 1.0 - 1e-15)
+    # Pick the predicted probability corresponding to each sample's true class
+    correct_class_probs = clipped_probs[np.arange(n_samples), y_true_indices]
+    return float(-np.mean(np.log(correct_class_probs)))
+
+def cross_entropy_softmax_gradient(y_true_indices: np.ndarray, probs: np.ndarray) -> np.ndarray:
+    """Computes combined gradient of Cross-Entropy + Softmax with respect to logits."""
+    n_samples = len(y_true_indices)
+    grad = probs.copy()
+    grad[np.arange(n_samples), y_true_indices] -= 1.0
+    return grad / n_samples
