@@ -68,7 +68,8 @@ class Sequential:
             out = layer.forward(out)
         return out
 
-    def backward(self, d_loss: np.ndarray, learning_rate: float) -> None:
+    def backward(self, d_loss: np.ndarray, learning_rate: float) -> np.ndarray:
         grad = d_loss
         for layer in reversed(self.layers):
             grad = layer.backward(grad, learning_rate)
+        return grad
