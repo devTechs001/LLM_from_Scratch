@@ -4,7 +4,7 @@ A ground-up implementation of machine learning, deep learning primitives, numeri
 
 ---
 
-## Complete 10-Phase Architecture & Documentation
+## Complete 12-Phase Architecture & Documentation
 
 | Phase | Description | Module | Documentation | Test Suite |
 | :--- | :--- | :--- | :--- | :--- |
@@ -18,6 +18,8 @@ A ground-up implementation of machine learning, deep learning primitives, numeri
 | **Phase 8** | Vision-Language Model (VLM / LLaVA) | `ml_lib.multimodal` | [`docs/phase_7_and_8_multimodal_vlm.md`](docs/phase_7_and_8_multimodal_vlm.md) | `tests/test_phase7_and_8_multimodal.py` (3 tests) |
 | **Phase 9** | Parameter-Efficient Fine-Tuning (LoRA & SFT) | `ml_lib.peft` | [`docs/phase_9_and_10_peft_and_alignment.md`](docs/phase_9_and_10_peft_and_alignment.md) | `tests/test_phase9_and_10_alignment.py` (4 tests) |
 | **Phase 10** | Preference Optimization & Alignment (DPO & RM) | `ml_lib.alignment` | [`docs/phase_9_and_10_peft_and_alignment.md`](docs/phase_9_and_10_peft_and_alignment.md) | `tests/test_phase9_and_10_alignment.py` (3 tests) |
+| **Phase 11** | Model Quantization & Compression (INT8 & INT4) | `ml_lib.quantization` | [`docs/phase_11_and_12_moe_and_quantization.md`](docs/phase_11_and_12_moe_and_quantization.md) | `tests/test_phase11_and_12_moe_quant.py` (4 tests) |
+| **Phase 12** | Sparse Mixture-of-Experts (MoE) & Top-k Routing | `ml_lib.moe` | [`docs/phase_11_and_12_moe_and_quantization.md`](docs/phase_11_and_12_moe_and_quantization.md) | `tests/test_phase11_and_12_moe_quant.py` (3 tests) |
 
 ---
 
@@ -33,7 +35,8 @@ A ground-up implementation of machine learning, deep learning primitives, numeri
 │   ├── phase_5_inference_engine_serving.md   # Top-p, Top-k, Temperature, Repetition Penalty, & Streaming Engine
 │   ├── phase_6_vision_and_multimodal.md      # PatchEmbedding, ViT, [CLS] token, & CLIP InfoNCE Contrastive Loss
 │   ├── phase_7_and_8_multimodal_vlm.md       # AudioSpectrogramTokenizer, ContinuousEncoder, VLM / LLaVA prefix fusion
-│   └── phase_9_and_10_peft_and_alignment.md  # LoRA low-rank adaptation, SFT prompt masking, RewardModel, & DPO
+│   ├── phase_9_and_10_peft_and_alignment.md  # LoRA low-rank adaptation, SFT prompt masking, RewardModel, & DPO
+│   └── phase_11_and_12_moe_and_quantization.md # INT8/INT4 quantization, QuantizedLinear, SparseMoE & Switch Aux Loss
 ├── ml_lib/
 │   ├── __init__.py                           # Complete package exports
 │   ├── losses.py                             # Losses, stability safeguards, analytic & numeric finite-difference gradients
@@ -46,7 +49,9 @@ A ground-up implementation of machine learning, deep learning primitives, numeri
 │   ├── data.py                               # Dataset, DataLoader, AudioSpectrogramTokenizer, ContinuousFeatureEncoder, Augmentations
 │   ├── multimodal.py                         # VisionLanguageModel (LLaVA architecture with visual prefix & text decoding)
 │   ├── peft.py                               # LoRALinear, weight merge/unmerge, SFT masked cross-entropy
-│   └── alignment.py                          # RewardModel, Bradley-Terry pairwise loss, DPO loss & policy gradients
+│   ├── alignment.py                          # RewardModel, Bradley-Terry pairwise loss, DPO loss & policy gradients
+│   ├── quantization.py                       # INT8 & INT4 symmetric/asymmetric quantization & QuantizedLinear
+│   └── moe.py                                # ExpertMLP, SparseMoE with top-k gating & Switch aux loss
 ├── tests/
 │   ├── test_phase1.py                        # 11 unit tests for losses, numerical stability & optimizers
 │   ├── test_phase2_nn.py                     # 8 unit tests for deep learning layers, activations, & LayerNorm/RMSNorm
@@ -56,6 +61,7 @@ A ground-up implementation of machine learning, deep learning primitives, numeri
 │   ├── test_phase6_vision.py                 # 5 unit tests for Vision Transformer & CLIP contrastive loss
 │   ├── test_phase7_and_8_multimodal.py       # 7 unit tests for Audio/Continuous tokenizers & VLM forward/backward/generate
 │   ├── test_phase9_and_10_alignment.py       # 7 unit tests for LoRA, weight merging, SFT masking, RewardModel & DPO
+│   ├── test_phase11_and_12_moe_quant.py      # 7 unit tests for INT8/INT4 quantization & SparseMoE routing/aux loss
 │   ├── test_minigpt.py                       # MiniGPT end-to-end training & generation
 │   ├── test_nn_xor.py                        # XOR non-linear separation & single-layer failure proof
 │   ├── test_multiclass_nn.py                 # Multi-class MLP cluster convergence
@@ -76,7 +82,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-### Run Full Test Suite (64 Unit Tests):
+### Run Full Test Suite (71 Unit Tests):
 ```bash
 PYTHONPATH=. pytest -v
 ```
@@ -106,6 +112,9 @@ PYTHONPATH=. python3 tests/test_phase7_and_8_multimodal.py
 
 # Phases 9 & 10: Parameter-Efficient Fine-Tuning (LoRA) & Alignment (DPO)
 PYTHONPATH=. python3 tests/test_phase9_and_10_alignment.py
+
+# Phases 11 & 12: Model Quantization (INT8/INT4) & Sparse Mixture-of-Experts (MoE)
+PYTHONPATH=. python3 tests/test_phase11_and_12_moe_quant.py
 ```
 
 ### Train Baseline MiniGPT and Generate Text:
