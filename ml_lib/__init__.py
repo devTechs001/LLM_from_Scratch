@@ -88,6 +88,19 @@ from ml_lib.alignment import (
     compute_sequence_log_probs,
     dpo_loss_and_gradients,
 )
+from ml_lib.quantization import (
+    quantize_symmetric_int8,
+    dequantize_symmetric_int8,
+    quantize_asymmetric_int8,
+    dequantize_asymmetric_int8,
+    quantize_symmetric_int4,
+    dequantize_symmetric_int4,
+    QuantizedLinear,
+)
+from ml_lib.moe import (
+    ExpertMLP,
+    SparseMoE,
+)
 
 __all__ = [
     # Losses & Gradients
@@ -170,4 +183,15 @@ __all__ = [
     "pairwise_reward_loss",
     "compute_sequence_log_probs",
     "dpo_loss_and_gradients",
+    # Quantization & Compression
+    "quantize_symmetric_int8",
+    "dequantize_symmetric_int8",
+    "quantize_asymmetric_int8",
+    "dequantize_asymmetric_int8",
+    "quantize_symmetric_int4",
+    "dequantize_symmetric_int4",
+    "QuantizedLinear",
+    # Sparse Mixture-of-Experts
+    "ExpertMLP",
+    "SparseMoE",
 ]
